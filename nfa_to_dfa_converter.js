@@ -86,7 +86,17 @@ class NFA {
                     return this.durumGecisleri[rowIdx][colIdx]
                 }).filter(harf => harf != "-");
                 if (gDurumHarfleri.length == 0) gDurumHarfleri = "-";
-                else gDurumHarfleri = [...new Set(gDurumHarfleri)].join('');
+                else {
+                    gDurumHarfleri = [
+                        ...new Set(
+                            gDurumHarfleri.map(d => d.split(''))
+                                .reduce((acc, d) => {
+                                    acc.push(...d);
+                                    return acc;
+                                }, [])
+                        )
+                    ].join('');
+                }
                 return gDurumHarfleri;
             });
 
@@ -205,7 +215,7 @@ NFA.prototype.print = function (titles = null, multi = null, mtxIdx = -1, prevLi
 }
 
 let NFAExamples = [
-    [ //ÖRNEK 1
+    [ //Example: 1
         ['A', 'B', 'C', 'D', 'E'],
         ['0', '1'],
         ['E'],
@@ -215,7 +225,7 @@ let NFAExamples = [
         - E
         - -`
     ],
-    [ //ÖRNEK 3
+    [ //Example: 2
         ['A', 'B', 'C', 'D', 'E', 'F'],
         ['0', '1', '2'],
         ['F'],
@@ -226,7 +236,7 @@ let NFAExamples = [
         F - -
         F F F`
     ],
-    [ //ÖRNEK 1
+    [ //Example: 3
         ['A', 'B', 'C', 'D', 'E', 'F'],
         ['a', 'b', 'c', 'd'],
         ['F'],
@@ -237,15 +247,42 @@ let NFAExamples = [
         - - F E
         B DF C -`
     ],
+    [ //Example: 4
+        ['A', 'B', 'C', 'D', 'E', 'F'],
+        ['a', 'b', 'c', 'd'],
+        ['F'],
+        `B DF C -
+        B DF - -
+        - - F E
+        D - - -
+        - - F E
+        B DF C -`
+    ],
+    [ //Example: 5
+        ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J'],
+        ['0', '1'],
+        ['J'],
+        `BG CH
+        - E
+        F -
+        G H
+        J -
+        - J
+        JD -
+        - JD
+        BG CH`
+    ],
 ];
 
-for (let i = 0; i < NFAExamples.length; i++) {
-    let text = " ÖRNEK" + (i + 1) + " ",
-        width = 50 - text.length;
+let centerText = (text, width, fill = " ") => {
+    width = Math.max(0, width - text.length / 2);
+    let right = parseInt(width / 2);
+    return fill.repeat(width - right) + text + fill.repeat(right);
+}
 
-    console.log("=".repeat(parseInt(width / 2)) + text + "=".repeat(width - parseInt(width / 2)));
-    var nfa = new NFA(...NFAExamples[i]);
-
+for (let i = 0, nfa; i < NFAExamples.length; i++) {
+    console.log(centerText(` EXAMPLE${i + 1} `, 50, "="));
+    nfa = new NFA(...NFAExamples[i]);
     nfa.print("NFA");
 
     var DFAs = nfa.convert2DFA();
