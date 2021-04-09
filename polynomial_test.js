@@ -37,14 +37,14 @@ describe('Polynomial', function () {
         it('exp 1', function () {
             assert.strictEqual(
                 (new Polynomial({ 0: 1, 4: 2, 2: 3, 10: 2 })).toString(false),
-                '2x^10 + 2x^4 + 3x^2 + 1'
+                '2x¹⁰ + 2x⁴ + 3x² + 1'
             );
         });
 
         it('exp 2', function () {
             assert.strictEqual(
                 (new Polynomial({ 2: 1, 3: -2, 1: 4, 10: -1 })).toString(false),
-                '-x^10 - 2x^3 + x^2 + 4x'
+                '-x¹⁰ - 2x³ + x² + 4x'
             );
         });
     })
@@ -55,12 +55,12 @@ describe('Polynomial', function () {
             assert.strictEqual((new Polynomial()).summation(new Polynomial()).toString(false), "0");
             assert.strictEqual((new Polynomial("1")).summation(new Polynomial()).toString(false), "1");
             assert.strictEqual(
-                (new Polynomial({ 0: 1, 4: 2, 2: 3, 10: 2 })) // 2x^10 + 2x^4 + 3x^2 + 1
+                (new Polynomial({ 0: 1, 4: 2, 2: 3, 10: 2 })) // 2x¹⁰ + 2x⁴ + 3x² + 1
                     .summation(
-                        new Polynomial({ 2: 1, 3: -2, 1: 4, 10: -1 }) // -x^10 -2x^3 + x^2 + 4x
+                        new Polynomial({ 2: 1, 3: -2, 1: 4, 10: -1 }) // -x¹⁰ -2x³ + x² + 4x
                     ).toString(false)
                 ,
-                "x^10 + 2x^4 - 2x^3 + 4x^2 + 4x + 1"
+                "x¹⁰ + 2x⁴ - 2x³ + 4x² + 4x + 1"
             );
         });
 
@@ -76,12 +76,12 @@ describe('Polynomial', function () {
             assert.strictEqual((new Polynomial()).substraction(new Polynomial()).toString(false), "0");
             assert.strictEqual((new Polynomial()).substraction(new Polynomial("1")).toString(false), "-1");
             assert.strictEqual(
-                (new Polynomial({ 0: 1, 4: 2, 2: 3, 10: 2 })) // 2x^10 + 2x^4 + 3x^2 + 1
+                (new Polynomial({ 0: 1, 4: 2, 2: 3, 10: 2 })) // 2x¹⁰ + 2x⁴ + 3x² + 1
                     .substraction(
-                        new Polynomial({ 2: 1, 3: -2, 1: 4, 10: -1 }) // -x^10 -2x^3 + x^2 + 4x
+                        new Polynomial({ 2: 1, 3: -2, 1: 4, 10: -1 }) // -x¹⁰ -2x³ + x² + 4x
                     ).toString(false)
                 ,
-                "3x^10 + 2x^4 + 2x^3 + 2x^2 - 4x + 1"
+                "3x¹⁰ + 2x⁴ + 2x³ + 2x² - 4x + 1"
             );
         });
 
@@ -95,10 +95,10 @@ describe('Polynomial', function () {
 
         it('exp 1', function () {
             assert.strictEqual(
-                (new Polynomial({ 0: 1, 4: 2, 2: 3, 10: 2 })) // 2x^10 + 2x^4 + 3x^2 + 1
+                (new Polynomial({ 0: 1, 4: 2, 2: 3, 10: 2 })) // 2x^1⁰ + 2x^4 + 3x^2 + 1
                     .mod(2)
                     .toString(false),
-                "x^2 + 1"
+                "x² + 1"
             );
         });
 
@@ -111,7 +111,7 @@ describe('Polynomial', function () {
                 (new Polynomial({ 3: 1 }))
                     .reduction(new Polynomial({ 4: 1, 1: 1, 0: 1 }))
                     .toString(false),
-                "x^3"
+                "x³"
             );
         });
 
@@ -120,7 +120,7 @@ describe('Polynomial', function () {
                 (new Polynomial({ 4: 1, 3: 1, 2: 1, 1: 1, 0: 2 }))
                     .reduction(new Polynomial({ 4: 1, 1: 1, 0: 1 }))
                     .toString(false),
-                "x^3 + x^2 + 1"
+                "x³ + x² + 2x + 3"
             );
         });
 
@@ -129,7 +129,7 @@ describe('Polynomial', function () {
                 (new Polynomial({ 10: 1 }))
                     .reduction(new Polynomial({ 4: 1, 1: 1, 0: 1 }))
                     .toString(false),
-                "x^2 + x + 1"
+                "2x³ + x² + x + 1"
             );
         });
 
@@ -139,7 +139,7 @@ describe('Polynomial', function () {
                     .multiply(new Polynomial({ 3: 1 }))
                     .reduction(new Polynomial({ 4: 1, 1: 1, 0: 1 }))
                     .toString(false),
-                "x^3 + x"
+                "x³ + 2x² + x"
             );
         });
 
@@ -152,7 +152,7 @@ describe('Polynomial', function () {
                 (new Polynomial({ 2: 3, 3: 7, 1: -16, 0: 3 }))
                     .multiply(new Polynomial({ 2: -5, 9: 3, 0: -19 }))
                     .toString(false),
-                "21x^12 + 9x^11 - 48x^10 + 9x^9 - 35x^5 - 15x^4 - 53x^3 - 72x^2 + 304x - 57"
+                "21x¹² + 9x¹¹ - 48x¹⁰ + 9x⁹ - 35x⁵ - 15x⁴ - 53x³ - 72x² + 304x - 57"
             );
         });
 
@@ -167,7 +167,7 @@ describe('Polynomial', function () {
                     .summation({ 4: 1, 5: 12, 6: -2, 2: 5 })
                     .mod(5)
                     .toString(false),
-                "x^13 + 4x^12 - 3x^11 + 4x^10 - 2x^6 - 3x^5 - 2x^4 - 2x^3 + 2x^2 - 2x"
+                "x¹³ + 4x¹² - 3x¹¹ + 4x¹⁰ - 2x⁶ - 3x⁵ - 2x⁴ - 2x³ + 2x² - 2x"
             );
         });
     });
