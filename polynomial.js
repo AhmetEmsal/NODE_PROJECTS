@@ -13,7 +13,8 @@ class Polynomial {
         let uint8Array;
         if (typeof datas == 'string') { //Binary string
             let bits = datas.split('');
-            if (bits.find(bit => bit != 0 && bit != 1)) throw new Error("Parameter named datas were gived as binary string. But string hadn't only zeros or ones.");
+            if (datas == 'Infinity') throw new Error('Infinity cannot be convert into a Polynomial!');
+            else if (bits.find(bit => bit != 0 && bit != 1)) throw new Error("Parameter named datas were gived as binary string. But string hadn't only zeros or ones.");
             uint8Array = new Uint8Array(bits);
         }
         else if (datas instanceof Uint8Array) uint8Array = datas;
@@ -225,7 +226,7 @@ class Polynomial {
 
 
 }
-Polynomial.prototype.toString = function (printFName = true, tab = 0) {
+Polynomial.prototype.toString = function (printFName = true, tab = 0, spaceBtwTerms = true) {
     tab = "\t".repeat(tab);
     let fx = '';
     Object.entries(this._datas).sort((a, b) => b[0] - a[0]).forEach((k, idx) => {
@@ -238,7 +239,7 @@ Polynomial.prototype.toString = function (printFName = true, tab = 0) {
             ( //Sign
                 idx == 0 ?
                     (negative ? "-" : "") :
-                    (negative ? " - " : " + ")
+                    (negative ? spaceBtwTerms ? " - " : "-" : spaceBtwTerms ? " + " : "+")
             ) +
             ( //Factor
                 factor != 1 ?
@@ -249,7 +250,7 @@ Polynomial.prototype.toString = function (printFName = true, tab = 0) {
                 degree != 0 ?
                     "x" + (
                         degree != 1 ?
-                            "^" + degree :
+                            displayExponent(degree) :
                             ""
                     ) :
                     ""
@@ -258,6 +259,21 @@ Polynomial.prototype.toString = function (printFName = true, tab = 0) {
     return tab + (printFName ? `f(x)= ` : '') + (fx || 0);
 }
 Polynomial.prototype.valueOf = function () { return this._datas; }
+
+function displayExponent(n) {
+    if (n == 0 || Math.abs(n) == 1) return "";
+    let resStr = "";
+    if (n < 0) {
+        resStr = String.fromCharCode(8315);
+        n *= -1;
+    }
+    let degreeList = [8304, 185, 178, 179, 8308, 8309, 8310, 8311, 8312, 8313].map(n => String.fromCharCode(n));
+
+    n.toString().split('').map(digit => {
+        resStr += degreeList[parseInt(digit)];
+    })
+    return resStr;
+};
 
 
 module.exports = Polynomial;
