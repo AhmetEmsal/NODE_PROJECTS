@@ -1,4 +1,9 @@
-require('colors');
+/**
+ * Author : Ahmet Emsal
+ * Created: 3.2021
+ * 
+ * Codes run on both nodejs and browser..
+ **/
 
 class NFA {
     constructor(durumlarKumesi, girisAlfabesi, ucDurumlarKumesi, durumGecisleri) {
@@ -97,7 +102,7 @@ class NFA {
                         )
                     ].join('');
                 }
-                return gDurumHarfleri.split('').sort((a, b)=> a.charCodeAt(0) - b.charCodeAt(0)).join('');
+                return gDurumHarfleri.split('').sort((a, b) => a.charCodeAt(0) - b.charCodeAt(0)).join('');
             });
 
             durumGecisleriSatiriEkle(yeniGecisDurumuSatiri); //Oluşturulan durum geçişleri satırının eklenmesi
@@ -118,8 +123,7 @@ class NFA {
         return [DFA, finalDFA];
     }
 }
-
-NFA.prototype.print = function (titles = null, multi = null, mtxIdx = -1, prevLines = []) {
+NFA.prototype.printConsole = function (titles = null, multi = null, mtxIdx = -1, prevLines = []) {
     let lines = [], line;
 
     let mLen1 = 0; //Durum geçişleri matrisindeki en uzun metnin uzunluğunu tutacak
@@ -173,17 +177,13 @@ NFA.prototype.print = function (titles = null, multi = null, mtxIdx = -1, prevLi
             (
                 this.ucDurumlarKumesi.includes(bDurum) ? //Başlangıç durumu, uç durum mu?
                     //Evet uç durum:
-                    bDurum.split('').map(harf => //Durum birden fazla karakterden oluşabilir
-                        // _ucDurumlar.includes(harf) ?
-                        //     harf.bold.cyan.inverse :
-                        harf
-                    ).join('').bgRed : //Uç durumsa arka planı kırmızı olarak yazdırılsın
+                    bDurum.bgRed : //Uç durumsa arka planı kırmızı olarak yazdırılsın
 
                     //Hayır uç durum değil:
                     bDurum //O zaman sade olarak yazdırılsın
             ) +
 
-            "|".yellow + " " +
+            (node ? "|".yellow : "|") + " " +
 
             row.map(gDurum => //Geçiş durum
                 space(mLen1 - gDurum.length) + //Geçiş durumlarını sağa yaslamak için gerekiyorsa önüne boşluk gelecek
@@ -209,83 +209,33 @@ NFA.prototype.print = function (titles = null, multi = null, mtxIdx = -1, prevLi
             console.log("");
             return;
         }
-        NFA.prototype.print.call(multi[mtxIdx + 1], ...[titles, multi, mtxIdx + 1, prevLines]);
+        NFA.prototype.printConsole.call(multi[mtxIdx + 1], ...[titles, multi, mtxIdx + 1, prevLines]);
     }
     else console.log("");
 }
 
-let NFAExamples = [
-    [ //Example: 1
-        ['A', 'B', 'C', 'D', 'E'],
-        ['0', '1'],
-        ['E'],
-        `A AB
-        D C
-        E -
-        - E
-        - -`
-    ],
-    [ //Example: 2
-        ['A', 'B', 'C', 'D', 'E', 'F'],
-        ['0', '1', '2'],
-        ['F'],
-        `AB A AC
-        - D -
-        - E -
-        - - F
-        F - -
-        F F F`
-    ],
-    [ //Example: 3
-        ['A', 'B', 'C', 'D', 'E', 'F'],
-        ['a', 'b', 'c', 'd'],
-        ['F'],
-        `B DF C -
-        B DF - -
-        - - F E
-        DF - - -
-        - - F E
-        B DF C -`
-    ],
-    [ //Example: 4
-        ['A', 'B', 'C', 'D', 'E', 'F'],
-        ['a', 'b', 'c', 'd'],
-        ['F'],
-        `B DF C -
-        B DF - -
-        - - F E
-        D - - -
-        - - F E
-        B DF C -`
-    ],
-    [ //Example: 5
-        ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J'],
-        ['0', '1'],
-        ['J'],
-        `BG CH
-        - E
-        F -
-        G H
-        J -
-        - J
-        JD -
-        - JD
-        BG CH`
-    ],
-];
 
-let centerText = (text, width, fill = " ") => {
-    width = Math.max(0, width - text.length / 2);
-    let right = parseInt(width / 2);
-    return fill.repeat(width - right) + text + fill.repeat(right);
-}
+let node = false;
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = NFA;
+    node = true;
 
-for (let i = 0, nfa; i < NFAExamples.length; i++) {
-    console.log(centerText(` EXAMPLE${i + 1} `, 50, "="));
-    nfa = new NFA(...NFAExamples[i]);
-    nfa.print("NFA");
+    require('colors');
+} else {
+    let colorCodes = {
+        green: [32, 39],
+        yellow: [33, 39],
+        gray: [90, 39],
 
-    var DFAs = nfa.convert2DFA();
-    NFA.prototype.print.call(DFAs[0], ...[['DFA', "Renamed DFA"], [DFAs[1]]]);
-    console.log();
+        bgRed: [41, 49],
+
+        underline: [4, 24]
+    }
+
+    for (const [prop, codeNums] of Object.entries(colorCodes)) {
+        Object.defineProperty(
+            String.prototype, prop, {
+            get: function () { return `\x1B[${codeNums[0]}m${this.valueOf()}\x1B[${codeNums[1]}m`; }
+        });
+    }
 }
